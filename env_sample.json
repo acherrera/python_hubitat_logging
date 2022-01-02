@@ -1,0 +1,6 @@
+{
+    "hubitat_ip": "XXX.XXX.XXX.XXX",
+    "influx_ip": "XXX.XXX.XXX.XXX",
+    "username": "hubitatuser",
+    "password": "password_here"
+}
