@@ -8,30 +8,14 @@ import json
 from influxdb import InfluxDBClient
 from time import time
 import websocket
-
-
-
-env_file = '.env'
-with open(env_file) as f:
-    env_data = json.load(f)
-HUB_ADDR = env_data["hubitat_ip"]
-INFLUX_ADDR = env_data["influx_ip"]
-USER = env_data["username"]
-PASS = env_data["password"]
-
-e_sock = f"ws://{HUB_ADDR}/eventsocket"
-
-
+import logging
+from logging.handlers import TimedRotatingFileHandler
 
 def message_parser(message):
     """
     Exract info required for data insertion
     """
-
-    # Save data for later
-    filename = "loggy.mclogface"
-    with open(filename, "w") as f:
-            f.write(json.dumps(message) + ",\n")
+    logger.info(message)
 
     # Used to remap values if needed
     value_mapping = {
@@ -60,8 +44,6 @@ def message_parser(message):
         line = f'{measurement},deviceId={did} value={value},unit="{unit}",displayName="{displayName}" {int(timestamp*1e9)}'
     return line
 
-
-
 def insert_message(wsapp, message):
     """
     Write the message to the database after parsing
@@ -78,5 +60,29 @@ def insert_message(wsapp, message):
     client.write([line], {'db': 'hubitat'}, 204, 'line')
     client.close()
 
-wsapp = websocket.WebSocketApp(e_sock, on_message=insert_message)
-wsapp.run_forever()
+if __name__ == "__main__":
+
+    logger = logging.getLogger("Rotating Log")
+    logger.setLevel(logging.INFO)
+
+    path = "/home/tony/repos/python_hubitat_logging/logs/hubitat.log"
+    handler = TimedRotatingFileHandler(path,
+                                       when="h",
+                                       interval=1,
+                                       backupCount=3)
+    logger.addHandler(handler)
+
+    logger.info("###### Starting Hubitat Logging #######")
+
+    env_file = '.env'
+    with open(env_file) as f:
+        env_data = json.load(f)
+    HUB_ADDR = env_data["hubitat_ip"]
+    INFLUX_ADDR = env_data["influx_ip"]
+    USER = env_data["username"]
+    PASS = env_data["password"]
+
+    e_sock = f"ws://{HUB_ADDR}/eventsocket"
+
+    wsapp = websocket.WebSocketApp(e_sock, on_message=insert_message)
+    wsapp.run_forever()
