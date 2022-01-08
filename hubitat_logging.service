@@ -1,0 +1,11 @@
+[Unit]
+Description=Logging for Hubitat in Python
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /home/herr1/hubitat_logging/main/main.py
+
+[Install]
+WantedBy=multi-user.target

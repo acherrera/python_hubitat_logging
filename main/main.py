@@ -14,7 +14,6 @@ import websocket
 env_file = '.env'
 with open(env_file) as f:
     env_data = json.load(f)
-    
 HUB_ADDR = env_data["hubitat_ip"]
 INFLUX_ADDR = env_data["influx_ip"]
 USER = env_data["username"]
@@ -31,7 +30,7 @@ def message_parser(message):
 
     # Save data for later
     filename = "loggy.mclogface"
-    with open(filename, "a") as f:
+    with open(filename, "w") as f:
             f.write(json.dumps(message) + ",\n")
 
     # Used to remap values if needed
