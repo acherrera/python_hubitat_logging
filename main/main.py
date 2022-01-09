@@ -62,18 +62,6 @@ def insert_message(wsapp, message):
 
 if __name__ == "__main__":
 
-    logger = logging.getLogger("Rotating Log")
-    logger.setLevel(logging.INFO)
-
-    path = "/home/tony/repos/python_hubitat_logging/logs/hubitat.log"
-    handler = TimedRotatingFileHandler(path,
-                                       when="h",
-                                       interval=1,
-                                       backupCount=3)
-    logger.addHandler(handler)
-
-    logger.info("###### Starting Hubitat Logging #######")
-
     env_file = '.env'
     with open(env_file) as f:
         env_data = json.load(f)
@@ -81,6 +69,18 @@ if __name__ == "__main__":
     INFLUX_ADDR = env_data["influx_ip"]
     USER = env_data["username"]
     PASS = env_data["password"]
+    logpath = env_data["log_location"]
+
+    logger = logging.getLogger("Rotating Log")
+    logger.setLevel(logging.INFO)
+    handler = TimedRotatingFileHandler(logpath,
+                                       when="h",
+                                       interval=1,
+                                       backupCount=3)
+    logger.addHandler(handler)
+
+    logger.info("###### Starting Hubitat Logging #######")
+
 
     e_sock = f"ws://{HUB_ADDR}/eventsocket"
 

@@ -2,5 +2,6 @@
     "hubitat_ip": "XXX.XXX.XXX.XXX",
     "influx_ip": "XXX.XXX.XXX.XXX",
     "username": "hubitatuser",
-    "password": "password_here"
+    "password": "password_here",
+    "log_location": "<absolute>/python_hubitat_logging/logs/hubitat.log"
 }
